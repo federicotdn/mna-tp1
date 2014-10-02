@@ -174,6 +174,13 @@ class Matrix:
 		self.for_each_pos(sub_values)
 		
 		return self
+
+	def get_diagonal(self):
+		diag = []
+		for i in range(self._size):
+			diag.append(self.get(i,i))
+
+		return diag
 		
 	def __sub__(self, other):
 		if other._size != self._size:
