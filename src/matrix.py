@@ -46,7 +46,7 @@ class Matrix:
 		return column
 	
 	@classmethod
-	def from_val_lists(cls, rows):
+	def from_row_lists(cls, rows):
 		row_count = len(rows)
 		mat = cls(row_count)
 		
@@ -57,6 +57,20 @@ class Matrix:
 			for j, val in enumerate(row):
 				mat.set(i, j, val)
 				
+		return mat
+	
+	@classmethod
+	def from_col_lists(cls, cols):
+		col_count = len(cols)
+		mat = cls(col_count)
+		
+		for j, col in enumerate(cols):
+			if len(col) != col_count:
+				raise MatrixException('List must contain N number of N-sized lists')
+		
+			for i, val in enumerate(col):
+				mat.set(i, j, val)
+		
 		return mat
 	
 	@classmethod
