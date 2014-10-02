@@ -45,6 +45,19 @@ class Matrix:
 			
 		return column
 	
+	def transpose(self):
+		mat = Matrix.copy(self)
+		
+		for i in range(mat._size):
+			for j in range(mat._size):
+				if i < j:
+					val = mat.get(i, j)
+					mat.set(i, j, mat.get(j, i))
+					mat.set(j, i, val)
+					
+		return mat
+				
+	
 	@classmethod
 	def from_row_lists(cls, rows):
 		row_count = len(rows)
