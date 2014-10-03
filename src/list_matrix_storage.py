@@ -1,16 +1,20 @@
 from matrix_storage import MatrixStorage
+import copy
 
 class ListMatrixStorage(MatrixStorage):
-	def __init__(self, n):
-		self._rows = []
+	def __init__(self, n, values = None):
 		self._size = n
 		
-		for i in range(n):
-			row = []
-			for j in range(n):
-				row.append(0)
-				
-			self._rows.append(row)
+		if not values:
+			self._rows = []
+			for i in range(n):
+				row = []
+				for j in range(n):
+					row.append(0)
+					
+				self._rows.append(row)
+		else:
+			self._rows = values
 		
 	def get(self, i, j):
 		return self._rows[i][j]
@@ -31,4 +35,8 @@ class ListMatrixStorage(MatrixStorage):
 	def size(self):
 		return self._size
 		
+	def clone(self):
+		vals = copy.deepcopy(self._rows)
+		st = ListMatrixStorage(self.size(), vals)
+		return st
 

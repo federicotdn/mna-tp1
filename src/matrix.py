@@ -10,8 +10,11 @@ class Matrix:
 	N x N square matrix
 	"""
 	
-	def __init__(self, n):
-		self._storage = ListMatrixStorage(n)
+	def __init__(self, n = None, storage = None):
+		if not storage:
+			self._storage = HashMatrixStorage(n)
+		else:
+			self._storage = storage
 
 	def __str__(self):
 		mat_str = ''
@@ -150,12 +153,8 @@ class Matrix:
 
 	@classmethod
 	def copy(cls, other):
-		mat = cls(other.size())
-		
-		def copy_val(i, j):
-			mat.set(i, j, other.get(i, j))
-			
-		mat.for_each_pos(copy_val)
+		storage = other._storage.clone()
+		mat = Matrix(other.size(), storage)
 		
 		return mat
 

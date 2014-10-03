@@ -6,7 +6,7 @@ import numpy
 
 def calculate_eigenvalues_A(m, L, delta1, delta2, alpha, beta):
 	A = calculate_matrix_A(m, L, delta1, delta2, alpha, beta)
-	A = Matrix.from_row_lists([[2,3,6], [ 4 , 5,  8], [9, 0, 1]])
+
 	prev_eigen = None
 	while not prev_eigen or math.fabs(A.get(0,0) - prev_eigen) > 0.01:
 

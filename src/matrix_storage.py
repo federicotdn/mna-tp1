@@ -16,3 +16,6 @@ class MatrixStorage:
 
 	def size(self):
 		raise NotImplementedError()
+
+	def clone(self):
+		raise NotImplementedError()

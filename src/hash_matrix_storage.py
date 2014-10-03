@@ -32,3 +32,7 @@ class HashMatrixStorage(MatrixStorage):
 	def size(self):
 		return self._size
 		
+	def clone(self):
+		st = HashMatrixStorage(self.size())
+		st._vals = self._vals.copy()
+		return st
