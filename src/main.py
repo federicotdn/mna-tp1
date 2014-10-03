@@ -13,7 +13,14 @@ def main():
 	alpha = 2
 	beta = 5.45
 	
-	print(problem3.calculate_eigenvalues_A(m, L, delta1, delta2, alpha, beta))
+	#A = problem1.calculate_matrix_A(m, L, delta1, delta2, alpha, beta)
+	#print(A)
+	
+	#egs = problem2.calculate_eigenvalues_A(m, L, delta1, delta2, alpha, beta)
+	#print(egs)
+	
+	#egs = problem3.calculate_eigenvalues_A(m, L, delta1, delta2, alpha, beta)
+	#print(egs)
 
 if __name__ == '__main__':
 	main()
