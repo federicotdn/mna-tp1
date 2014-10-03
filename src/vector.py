@@ -1,3 +1,5 @@
+import math
+
 class Vector:
 
 	def __init__(self, values):
@@ -7,7 +9,7 @@ class Vector:
 		total = 0
 		for i in self._values:
 			total += i**2
-		norm = sqrt(total)
+		norm = math.sqrt(total)
 		return Vector([x/norm for x in self._values])
 
 	def dot_product(self, other):
@@ -34,5 +36,9 @@ class Vector:
 	def __truediv__(self, num):
 		return self * (1/num)
 
+	def get_values(self):
+		return self._values
 
+	def __str__(self):
+		return str(self._values)
 
