@@ -19,10 +19,10 @@ def calculate_eigenvalues_A(m, L, delta1, delta2, alpha, beta):
 def calculate_Q(mat):
 	q_list = [Vector(mat.get_col(0)).normalize()]
 
-	for i in range(1, mat._size):
+	for i in range(1, mat.size()):
 		vector = Vector(mat.get_col(i))
 
-		aux_vec = Vector([0] * mat._size)
+		aux_vec = Vector([0] * mat.size())
 		for j in range(i):
 			aux_vec += q_list[j] * vector.dot_product(q_list[j])
 
@@ -34,7 +34,7 @@ def calculate_Q(mat):
 def get_eigenvalues(mat):
 	values = []
 	skip = False
-	for i in range(1, mat._size):
+	for i in range(1, mat.size()):
 		if not skip:
 			if  math.fabs(mat.get(i, i -1)) > 0.00001:
 				a = mat.get(i-1, i-1)
@@ -52,7 +52,7 @@ def get_eigenvalues(mat):
 		
 
 	if not skip:
-		values.append(mat.get(mat._size -1 , mat._size -1))
+		values.append(mat.get(mat.size() -1 , mat.size() -1))
 
 	return values
 
