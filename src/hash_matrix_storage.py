@@ -13,7 +13,8 @@ class HashMatrixStorage(MatrixStorage):
 			return 0
 		
 	def set(self, i, j, val):
-		self._vals[hash((i, j))] = val
+		if val != 0:
+			self._vals[hash((i, j))] = val
 		
 	def get_row(self, i):
 		row = []
