@@ -3,9 +3,12 @@ from problem1 import calculate_matrix_A
 from vector import Vector
 import math
 import numpy
+import time
 
 def calculate_eigenvalues_A(m, L, delta1, delta2, alpha, beta):
 	A = calculate_matrix_A(m, L, delta1, delta2, alpha, beta)
+
+	start_time = time.time()
 
 	prev_eigen = None
 	while not prev_eigen or math.fabs(A.get(0,0) - prev_eigen) > 0.01:
@@ -14,7 +17,13 @@ def calculate_eigenvalues_A(m, L, delta1, delta2, alpha, beta):
 
 		Q = calculate_Q(A)
 		A = Q.transpose() * A * Q
-	return get_eigenvalues(A)
+		
+	eigs = get_eigenvalues(A)
+	
+	elapsed = time.time() - start_time
+	print('Tiempo tardado: ' + '{:.10f}'.format(elapsed) + ' segundos.')
+	
+	return eigs
 
 def calculate_Q(mat):
 	q_list = [Vector(mat.get_col(0)).normalize()]

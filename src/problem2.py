@@ -1,10 +1,13 @@
 import math
 import numpy
+import time
 
 def calculate_eigenvalues_A(m, L, delta1, delta2, alpha, beta):
 	"""
 	From collection.ps
 	"""
+	
+	start_time = time.time()
 	
 	h = 1.0 / (m + 1)
 	
@@ -34,6 +37,9 @@ def calculate_eigenvalues_A(m, L, delta1, delta2, alpha, beta):
 		
 		a_eigs.append(d[0])
 		a_eigs2.append(d[1])
-		
+	
+	elapsed = time.time() - start_time
+	print('Tiempo tardado: ' + '{:.10f}'.format(elapsed) + ' segundos.')
+
 	return a_eigs + a_eigs2
 		
