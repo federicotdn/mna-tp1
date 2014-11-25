@@ -1,0 +1,92 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{makeidx}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{float}
+
+
+\title{TPE Métodos Numéricos Avanzados\\Modelo de Brusselator - MVMBMWM para reacciones químicas}
+\date{Noviembre 2014}
+\author{Federico Tedin - 53048\\Javier Fraire - 53023}
+
+\makeindex
+
+\begin{document}
+\maketitle
+
+\renewcommand{\abstractname}{Resumen:}
+\begin{abstract}
+
+\centering
+Generación y cálculo de autovalores en forma analítica y númerica, utilizando el método QR, de la matriz correspondiente a la discretización del Jacobiano del modelo Brusselator.
+
+\end{abstract}
+
+\renewcommand{\abstractname}{Palabras clave:}
+\begin{abstract}
+
+\centering
+\textbf{matrices ralas, autovalores, autovectores, QR, algoritmos, almacenamiento, Brusselator, Gram-Schmidt, Hessenberg}
+
+\end{abstract}
+
+\clearpage
+\renewcommand{\contentsname}{Índice}
+\tableofcontents
+\clearpage
+
+\section{Introducción}
+El nombre del tema del trabajo práctico, “Brusselator wave in chemical reaction”, proviene del modelado de las concentraciones de dos sustancias químicas ubicadas en un reactor tubular.  Estas concentraciones se describen utilizando las siguientes ecuaciones diferenciales: 
+
+\begin{equation} \label{eq:dif1}
+\frac{\partial x}{\partial t} = \frac{\delta_1 \partial^2 x}{L^2  \partial^2 z} + f(x,y)
+\end{equation}
+\begin{equation} \label{eq:dif2}
+\frac{\partial y}{\partial t} = \frac{\delta_2 \partial^2 x}{L^2  \partial^2 z} + g(x,y)
+\end{equation}
+donde
+$$x = x(t,z)$$
+$$y = y(t,z)$$
+con las condiciones iniciales $x(0,z) = x_0(z), y(0,z) = y_0(z)$ y las condiciones de borde de Dirichlet $x(t,0) = x(t,1) = x^*, y(t,0) = y(t,1) = y^*$ donde $0 \leq z \leq 1$ es el espacio de coordenadas a lo largo del tubo y $t$, el tiempo.
+En el modelo llamdo Brusselator se consideran:
+$$f(x,y) = \alpha - (\beta + 1)x + x^2y,\:g(x,y) = \beta x - x^2y$$
+Este sistema admite las soluciones estacionarias triviales $x^* = \alpha,\: y^*=\frac{\because}{\alpha}$
+
+Si se discretiza el intervalo $[0,1]$ usando $m$ puntos interiores con una malla de tamaño $h = \frac{1}{m+1}$, la discretización del jacobiano de \eqref{eq:dif1} y \eqref{eq:dif2} viene dada por:
+$$A = 
+\begin{pmatrix}
+  \tau_1 T + (\beta -1) I & \alpha^2I\\
+  -\beta I & \tau_2 T - \alpha^2 I 
+ \end{pmatrix}$$
+
+El artículo se divide en dos secciones principales: metodología y resultados y conclusiones. En la primera se encuentran las herramientas utilizadas y los métodos utilizados para resolver el problema planteado.  En la segunda, se detallan los resultados y se sacan conclusiones respecto a ellos.
+
+\section{Metodología}
+
+Para la realización del trabajo práctico se utilizó el idioma de programación Python 3.4.  Con el fin de tener un mejor control sobre los cálculos realizados, se decidió crear una clase nueva para modelar matrices matemáticas.  Esta clase permite realizar operaciones comunes entre matrices (multiplicación, suma, resta, etc.), y también armar matrices comúnmente usadas (identidad, tridiagonal, etc.).
+
+La implementación de la clase mencionada esta separada en varios archivos.  En el archivo matrix.py se encuentra la clase \textbf{Matrix}, que modela a una matriz matematica cuadrada de tamaño $N\times N$. Esta clase incluye los métodos que describen cómo realizar operaciones entre matrices, por ejemplo, el método \emph{\_\_mul\_\_(self, other)} realiza los cálculos necesarios para multiplicar dos matrices. La clase también posee constructores que permiten crear matrices predefinidas como la identidad o la matriz nula.
+
+Aunque la clase \textbf{Matrix} modela el comportamiento de una matriz, los valores numéricos de la matriz no se encuentran directamente almacenados allí.  En cambio, cada instancia de la clase \textbf{Matrix} posee una variable de tipo \textbf{MatrixStorage}, en donde se almacenan todos los valores.  \textbf{MatrixStorage} es una interfaz que se encuentra en el archivo \emph{matrix\_storage.py}, que describe los métodos que deberían tener clases que deseen servir como sistema de almacenamiento de los valores de la matriz.  Uno de los métodos descritos es, por ejemplo, \emph{get(i, j)}, que debe devolver el valor almacenado en la fila i, columna j.
+
+En el trabajo práctico se experimento con dos implementaciones distintas de \textbf{MatrixStorage}.  La primera en ser creada fue \textbf{ListMatrixStorage}, en el archivo \emph{list\_matrix\_storage.py}.  Ésta clase implementa el almacenamiento de los valores como una lista de listas de valores, donde cada lista interna representa las filas de la matriz.  La segunda implementación creada fue \textbf{HashMatrixStorage}, que utiliza un la clase diccionario de Python para almacenar valores.  En éste caso, para acceder o establecer un valor de la matriz en la posición (i, j), se calcula primero el hash de la dupla que representa la posición, y a partir del valor resultante se accede al valor en el diccionario.  La ventaja de éste método es que no es necesario almacenar ceros, ya que cuando se intenta acceder a un valor (i, j) que no fue establecido en el diccionario, se devuelve automáticamente el valor 0.  El método no es perfecto ya que siempre existe la probabilidad de que ocurran colisiones: el hash de dos duplas de posiciones resultan en valores que llevan a la misma posición del diccionario.
+
+
+
+
+
+\clearpage
+
+\renewcommand\refname{Referencias}
+\begin{thebibliography}{9}
+\bibitem{collection}
+ Zhaojun Baiy, David Day, James Demmel and Jack Dongarra \emph{A Test Matrix Collection for Non-Hermitian Eigenvalue Problems}. \url{http://www.cs.ucdavis.edu/~bai/NEP/document/collection.ps}
+\end{thebibliography}
+
+
+\end{document}
