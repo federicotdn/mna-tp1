@@ -7,19 +7,40 @@ import time
 
 def calculate_eigenvalues_A(m, L, delta1, delta2, alpha, beta):
 	A = calculate_matrix_A(m, L, delta1, delta2, alpha, beta)
+	B = [[2.261463012947533, 1.0942684935262337, 0, 0, 0, 4.0, 0, 0, 0, 0],
+		[1.0942684935262337, 2.261463012947533, 1.0942684935262337, 0, 0, 0, 4.0, 0, 0, 0],
+		[0, 1.0942684935262337, 2.261463012947533, 1.0942684935262337, 0, 0, 0, 4.0, 0, 0],
+		[0, 0, 1.0942684935262337, 2.261463012947533, 1.0942684935262337, 0, 0, 0, 4.0, 0],
+		[0, 0, 0, 1.0942684935262337, 2.261463012947533, 0, 0, 0, 0, 4.0],
+		[-5.45, 0, 0, 0, 0, -5.094268493526234, 0.5471342467631168, 0, 0, 0],
+		[0, -5.45, 0, 0, 0, 0.5471342467631168, -5.094268493526234, 0.5471342467631168, 0, 0],
+		[0, 0, -5.45, 0, 0, 0, 0.5471342467631168, -5.094268493526234, 0.5471342467631168, 0],
+		[0, 0, 0, -5.45, 0, 0, 0, 0.5471342467631168, -5.094268493526234, 0.5471342467631168],
+		[0, 0, 0, 0, -5.45, 0, 0, 0, 0.5471342467631168, -5.094268493526234]]
+	e, n = numpy.linalg.eig(B)
+	print(e)
+	print('\n----------------------------------------------------------------------------\n')
 
 	start_time = time.time()
 
-	prev_eigen = None
-	while not prev_eigen or math.fabs(A.get(0,0) - prev_eigen) > 0.01:
-
-		prev_eigen = A.get(0,0)
-
+	n = A.size()
+	eigs = []
+	while n != 1 and n != 2:
 		Q = calculate_Q(A)
 		A = Q.transpose() * A * Q
+		if( abs(A.get(n-1, n-2)) < 0.0000000000001):
+			eigs.append(A.get(n-1, n-1))
+			n -=1
+			A.shrink(1)
+		elif abs(A.get(n-2, n-3)) < 0.0000000000001:
+			eigs.extend(get_egien_man(A,n-1,n-1))
+			n-=2
+			A.shrink(2)
+	if (n ==1):
+		eigs.append(A.get(0,0))
+	else:
+		eigs.extend(get_egien_man(A, 1,1))
 		
-	eigs = get_eigenvalues(A)
-	
 	elapsed = time.time() - start_time
 	print('Tiempo tardado: ' + '{:.10f}'.format(elapsed) + ' segundos.')
 	
@@ -39,6 +60,14 @@ def calculate_Q(mat):
 		q_list.append(e.normalize())
 
 	return Matrix.from_col_lists([x.get_values() for x in q_list])
+
+def get_egien_man(mat, row, col):
+	a = mat.get(row-1, col-1)
+	b = mat.get(row-1, col)
+	c = mat.get(row, col-1)
+	d = mat.get(row, col)
+	eg = numpy.roots([1, -d -a, (a*d) - (b*c)])
+	return eg
 
 def get_eigenvalues(mat):
 	values = []
