@@ -37,3 +37,18 @@ class HashMatrixStorage(MatrixStorage):
 		st = HashMatrixStorage(self.size())
 		st._vals = self._vals.copy()
 		return st
+
+	def delete(self, i, j):
+		key = hash((i, j))
+		del self._vals[key]
+
+	def shrink(self, n):
+		for i in range(self._size - n):
+			for j in range(self._size - n, self._size):
+				self.delete(i, j)
+				
+		for i in range(self._size - n, self._size):
+			for j in range(self._size):
+				self.delete(i, j)
+		
+		self._size -= n

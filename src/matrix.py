@@ -210,6 +210,9 @@ class Matrix:
 
 		return diag
 		
+	def shrink(self, n):
+		self._storage.shrink(n)
+		
 	def __sub__(self, other):
 		if other.size() != self.size():
 			raise MatrixException('Matrices must be the same size in order to subtract.')

@@ -39,4 +39,10 @@ class ListMatrixStorage(MatrixStorage):
 		vals = copy.deepcopy(self._rows)
 		st = ListMatrixStorage(self.size(), vals)
 		return st
+		
+	def shrink(self, n):
+		for i in range(0, len(self._rows) - n):
+			self._rows[i] = self._rows[i][:-n]
+		self._rows = self._rows[:-n]
+		self._size -= n
 

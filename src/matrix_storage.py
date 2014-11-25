@@ -19,3 +19,6 @@ class MatrixStorage:
 
 	def clone(self):
 		raise NotImplementedError()
+
+	def shrink(self, n):
+		raise NotImplementedError()
