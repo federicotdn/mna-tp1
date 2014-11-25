@@ -17,6 +17,8 @@ class ListMatrixStorage(MatrixStorage):
 			self._rows = values
 		
 	def get(self, i, j):
+		if i < 0 or j < 0:
+			raise IndexError()
 		return self._rows[i][j]
 		
 	def set(self, i, j, val):
