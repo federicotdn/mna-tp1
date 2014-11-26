@@ -1,5 +1,6 @@
 from list_matrix_storage import ListMatrixStorage
 from hash_matrix_storage import HashMatrixStorage
+from yale_matrix_storage import YaleMatrixStorage
 
 class MatrixException(Exception):
 	pass

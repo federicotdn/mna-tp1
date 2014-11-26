@@ -15,6 +15,8 @@ class HashMatrixStorage(MatrixStorage):
 	def set(self, i, j, val):
 		if val != 0:
 			self._vals[hash((i, j))] = val
+		else: 
+			self.delete(i, j)
 		
 	def get_row(self, i):
 		row = []
