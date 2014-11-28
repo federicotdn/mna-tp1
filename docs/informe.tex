@@ -186,14 +186,14 @@ En todos los casos se utilizaron $L=0,51302$, $delta1=0,008$, $delta2=0,004$, $a
   \hline
   $50$ & $100 \times 100$  & $3881,91$ & YaleMatrixStorage\\
   \hline
-  $70$ & $140 \times 140$  & $3,06$ & YaleMatrixStorage\\
+  $70$ & $140 \times 140$  & $14584,32$ & YaleMatrixStorage\\
   \hline
 \end{tabular}
 \caption{\emph{Tiempo de cálculo de autovalores de las distintas implementaciones.}}
 \end{table}
 Como se puede observar en la tabla para matrices  $100 \times 100$ y para matrices más chicas  tardó un tiempo razonable, pero para matrices $140 \times 140$ tardó más de 15 minutos. Por lo tanto se recomienda como tamaño máximo de matriz utilizar 140 x 140. También se puede observar que el método no es eficiente ya que tarda mucho.
 
-Las matrices con las que opera el programa son ralas. Como se mencionó anteriormente se realizó una implementación de esta matrices llamada \textbf{HashMatrixStorage} que utiliza un diccionario para guardar los elementos. Esto permite ahorrar memoria y procesar menos datos, pero como se puede observar en la tabla 1, en la práctica probó ser más lento. Tardando el cuádruple que utilizando la implementación con listas. Tambien se realizó una implementacion llamada \textbf{YaleMatrixStorage} la cúal también ahorraba espacio y también probo ser más lenta. Además, se intentó realizar una variacíon a la multiplicación llamada \emph{multiply\_quick\_values}. Esta, en lugar de multiplicar las filas y columnas completas, se obtenían las filas y columnas solo con los elementos que fueran distintos de 0. De esta manera, se evita iterar sobre una gran cantidad de números, "salteando" los 0. Está implementación también resulto ser más lenta.
+Las matrices con las que opera el programa son ralas. Como se mencionó anteriormente se realizó una implementación de esta matrices llamada \textbf{HashMatrixStorage} que utiliza un diccionario para guardar los elementos. Esto permite ahorrar memoria y procesar menos datos, pero como se puede observar en la tabla 1, en la práctica probó ser más lento. Tardando hasta casi tres veces más que utilizando la implementación con listas. Tambien se realizó una implementacion llamada \textbf{YaleMatrixStorage} la cúal también ahorraba espacio y también probo ser más lenta. Además, se intentó realizar una variacíon a la multiplicación llamada \emph{multiply\_quick\_values}. Esta, en lugar de multiplicar las filas y columnas completas, se obtenían las filas y columnas solo con los elementos que fueran distintos de 0. De esta manera, se evita iterar sobre una gran cantidad de números, "salteando" los 0. Está implementación también resulto ser más lenta.
 
 El orden de complejidad del algoritmo en cada iteración es $O(n^3)$. Sabemos de la existencia de otros algoritmos que operan mejor, pero no pudimos realizar una implementación que funcionara correctamente. Por ejemplo utilizando Hessenberg se podría reducir la complejidad de cada iteración a $O(n)$. 
 
