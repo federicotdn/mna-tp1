@@ -13,7 +13,7 @@ class Matrix:
 	
 	def __init__(self, n = None, storage = None):
 		if not storage:
-			self._storage = YaleMatrixStorage(n)
+			self._storage = ListMatrixStorage(n)
 		else:
 			self._storage = storage
 

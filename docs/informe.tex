@@ -143,19 +143,24 @@ x_{0,0} & x_{0,1} & \ldots & \ldots & x_{0,n-1} \\
 
 \end{pmatrix}
 $$
-el algoritmo comienza por $x_{n-1,n-1}$. Por lo explicado anteriormente, se busca $x_{n-1,n-2} = 0$ o $x_{n-2,n-3} =0$. Si $x_{n-1,n-2} =0$, significa que $x_{n-1,n-1}$ es un autovalor real, por lo que se agrega a la lista de autovalores obtenidos y se elimina la fila y columna a la que pertenece, ya que ya se obutvo el autovalor. Si $x_{n-2,n-3} =0$, se trata de auto valores complejos, por lo que se forma la siguiente matriz:
+el algoritmo comienza por $x_{n-1,n-1}$. Por lo explicado anteriormente, se busca $x_{n-1,n-2} = 0$ o $x_{n-2,n-3} =0$. Si $x_{n-1,n-2} =0$, significa que $x_{n-1,n-1}$ es un autovalor real ya que esto implica que $x_{n-2,n-2}$ convergió y, como converge "de abajo hacia arriba", $x_{n-1,n-1}$ también convergió. Por lo tanto,e se agrega $x_{n-1,n-1}$ a la lista de autovalores obtenidos y se elimina la fila y columna a la que pertenece, ya que ya se obutvo el autovalor. Si $x_{n-2,n-3} =0$, se trata de auto valores complejos, por lo que se forma la siguiente matriz:
 $$
 \begin{pmatrix}
 x_{n-2,n-2} & x_{n-2, n-1} \\
 x_{n-1,n-2} & x_{n-1, n-1}
 \end{pmatrix}
 $$
+
 Luego, se calculan los autovalores de dicha matriz y se agregan a la lista de autovalores obtenidos. Luego se eliminan las dos filas y dos columnas a las que pertenecen los elementos de la matriz ya que se obtuvieron los autovalores deseados.
 Luego se repite el procedimiento con $T_{k+1} \: \epsilon  \: \mathbb{R}^{n-1 \times n-1}$ buscando la convergencia de $x_{n-2,n-3}$ o $x_{n-3,n-4}$. Esto se repite sucesivamente hasta que $T_{k+1} \: \epsilon  \: \mathbb{R}^{1 \times 1}$ o $T_{k+1} \: \epsilon  \: \mathbb{R}^{2 \times 2}$.
 
 Como se trata de puntos flotantes, la comparación con 0 no funciona. Por lo que se debe tomar un valor para el cual se considera que un autovalor es 0. En el algoritmo, se tomo la siguiente condición para determinar si un elemento convergía a 0:
-$$| x_{n-1, n-2} | < tol \times (|x_{n-1, n-1}| + |x_{n-2, n-2}|) $$
+\begin{equation}\label{eq:cond}
+| x_{n-1, n-2} | < tol \times (|x_{n-1, n-1}| + |x_{n-2, n-2}|) 
+\end{equation}
 siendo $tol$ un valor de tolerancia arbitrario. En este caso se eligió, $tol = 10^{-10}$.
+
+En una primera iteración del trabajo se había establecido como condición de corte $|\lambda_1^{k+1} - \lambda_1^{k}| < \epsilon$. Esto no funcionó ya que la convergencia de un autovalor en el método QR está determinada por el elemento que se encuentra debajo. Por lo tanto se utilizó \eqref{eq:cond}.
 
 Para obtener los autovalores hay que llamar a la fucnión \emph{calculate\_eigenvalues\_A(m, L, delta1, delta2, alpha, beta)}. Dicha función calcula la matriz A de acuerdo a los valores recibidos. La función itera hasta que todos los autovalores hayan sido encontrados.
 
