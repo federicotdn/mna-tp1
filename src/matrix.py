@@ -13,7 +13,7 @@ class Matrix:
 	
 	def __init__(self, n = None, storage = None):
 		if not storage:
-			self._storage = ListMatrixStorage(n)
+			self._storage = YaleMatrixStorage(n)
 		else:
 			self._storage = storage
 
@@ -46,6 +46,13 @@ class Matrix:
 		
 	def size(self):
 		return self._storage.size()
+
+	def get_quick_row(self, row):
+		return self._storage.get_quick_row(row)
+
+	def get_quick_col(self, col):
+		return self._storage.get_quick_col(col)
+
 	
 	def transpose(self):
 		mat = Matrix.copy(self)
@@ -236,7 +243,29 @@ class Matrix:
 				raise MatrixException('Matrices must be the same size in order to multiply.')
 			
 			mat = Matrix(self.size())
-			
+
+			def multiply_quick_values(i,j):
+				row = self.get_quick_row(i)
+				col = other.get_quick_col(j)
+				total = 0
+
+				if not row or not col:
+					mat.set(i,j,0)
+					return
+
+				i1 ,i2 = 0, 0
+				while i1 < len(row) and i2 < len(col):
+					if row[i1][0] < col[i2][0]:
+						i1+=1
+					elif row[i1][0] > col[i2][0]:
+						i2+=1
+					else:
+						total+= row[i1][1] * col[i2][1]
+						i1+=1
+						i2+=1
+				mat.set(i,j,total)
+
+							
 			def multiply_values(i, j):
 				row = self.get_row(i)
 				col = other.get_col(j)

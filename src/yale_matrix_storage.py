@@ -71,6 +71,17 @@ class YaleMatrixStorage(MatrixStorage):
 			row[stored_j] = stored_val
 		
 		return row
+
+	def get_quick_row(self, i):
+		i1, i2 = self.ia_pair(i)
+		row = []
+		
+		for col in range(i1, i2):
+			stored_j = self._JA[col]
+			stored_val = self._A[col]
+			row.append((stored_j, stored_val))
+		
+		return row
 		
 	def get_col(self, j):
 		col = [ 0 ] * self._size
@@ -85,6 +96,22 @@ class YaleMatrixStorage(MatrixStorage):
 					i1, i2 = self.ia_pair(current_row)
 					
 				col[current_row] = self._A[index]
+				current_row += 1
+
+		return col
+
+	def get_quick_col(self, j):
+		col = []
+		current_row = 0
+		for index, stored_j in enumerate(self._JA):
+			if stored_j == j:
+				i1, i2 = self.ia_pair(current_row)
+				
+				while not index in range(i1, i2):
+					current_row += 1
+					i1, i2 = self.ia_pair(current_row)
+					
+				col.append((current_row,self._A[index]))
 				current_row += 1
 
 		return col

@@ -22,3 +22,10 @@ class MatrixStorage:
 
 	def shrink(self, n):
 		raise NotImplementedError()
+
+	def get_quick_col(self, j):
+		raise NotImplementedError()
+
+	def get_quick_row(self, i):
+		raise NotImplementedError() 
+

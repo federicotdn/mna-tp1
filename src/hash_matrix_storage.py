@@ -24,6 +24,14 @@ class HashMatrixStorage(MatrixStorage):
 			row.append(self.get(i, j))
 			
 		return row
+
+	def get_quick_row(self,i):
+		row=[]
+		for j in range(self._size):
+			val = self.get(i, j)
+			if val:
+				row.append((j,val))
+		return row
 		
 	def get_col(self, j):
 		col = []
@@ -31,6 +39,15 @@ class HashMatrixStorage(MatrixStorage):
 			col.append(self.get(i, j))
 			
 		return col
+
+	def get_quick_col(self, j):
+		col = []
+		for i in range(self._size):
+			val = self.get(i, j)
+			if val:
+				col.append((i, val))
+			
+		return col 
 		
 	def size(self):
 		return self._size
@@ -42,7 +59,7 @@ class HashMatrixStorage(MatrixStorage):
 
 	def delete(self, i, j):
 		key = hash((i, j))
-		del self._vals[key]
+		self._vals.pop(key, None)
 
 	def shrink(self, n):
 		for i in range(self._size - n):

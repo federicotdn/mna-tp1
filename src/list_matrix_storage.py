@@ -26,12 +26,27 @@ class ListMatrixStorage(MatrixStorage):
 		
 	def get_row(self, i):
 		return self._rows[i]
+
+	def get_quick_row(self, i):
+		row = []
+		for j, val in enumerate(self._rows[i]):
+			if val:
+				row.append((j, val))
+		return row
 		
 	def get_col(self, j):
 		col = []
 		for row in self._rows:
 			col.append(row[j])
 			
+		return col
+
+	def get_quick_col(self, j):
+		col = []
+		for i,row in enumerate(self._rows):
+			val = row[j]
+			if val:
+				col.append((i,val))
 		return col
 		
 	def size(self):

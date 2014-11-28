@@ -7,32 +7,21 @@ import time
 
 def calculate_eigenvalues_A(m, L, delta1, delta2, alpha, beta):
 	A = calculate_matrix_A(m, L, delta1, delta2, alpha, beta)
-	B = [[2.261463012947533, 1.0942684935262337, 0, 0, 0, 4.0, 0, 0, 0, 0],
-		[1.0942684935262337, 2.261463012947533, 1.0942684935262337, 0, 0, 0, 4.0, 0, 0, 0],
-		[0, 1.0942684935262337, 2.261463012947533, 1.0942684935262337, 0, 0, 0, 4.0, 0, 0],
-		[0, 0, 1.0942684935262337, 2.261463012947533, 1.0942684935262337, 0, 0, 0, 4.0, 0],
-		[0, 0, 0, 1.0942684935262337, 2.261463012947533, 0, 0, 0, 0, 4.0],
-		[-5.45, 0, 0, 0, 0, -5.094268493526234, 0.5471342467631168, 0, 0, 0],
-		[0, -5.45, 0, 0, 0, 0.5471342467631168, -5.094268493526234, 0.5471342467631168, 0, 0],
-		[0, 0, -5.45, 0, 0, 0, 0.5471342467631168, -5.094268493526234, 0.5471342467631168, 0],
-		[0, 0, 0, -5.45, 0, 0, 0, 0.5471342467631168, -5.094268493526234, 0.5471342467631168],
-		[0, 0, 0, 0, -5.45, 0, 0, 0, 0.5471342467631168, -5.094268493526234]]
-	e, n = numpy.linalg.eig(B)
-	print(e)
-	print('\n----------------------------------------------------------------------------\n')
+	EPSILON = math.pow(10,-10)
 
 	start_time = time.time()
 
 	n = A.size()
 	eigs = []
 	while n != 1 and n != 2:
-		Q = calculate_Q(A)
-		A = Q.transpose() * A * Q
-		if( abs(A.get(n-1, n-2)) < 0.0000000000001):
+		Q, R = calculate_QR(A)
+		A = R * Q
+		if( cut_condition(EPSILON, A.get(n-1, n-2), A.get(n-2,n-2), A.get(n-1,n-1))):
 			eigs.append(A.get(n-1, n-1))
 			n -=1
 			A.shrink(1)
-		elif abs(A.get(n-2, n-3)) < 0.0000000000001:
+
+		elif cut_condition(EPSILON, A.get(n-2, n-3),A.get(n-2,n-2), A.get(n-3,n-3)):
 			eigs.extend(get_egien_man(A,n-1,n-1))
 			n-=2
 			A.shrink(2)
@@ -46,20 +35,27 @@ def calculate_eigenvalues_A(m, L, delta1, delta2, alpha, beta):
 	
 	return eigs
 
-def calculate_Q(mat):
-	q_list = [Vector(mat.get_col(0)).normalize()]
+def cut_condition(tol, val, val2, val3):
+	return abs(val) < (tol*(abs(val2) + abs(val3)))
 
-	for i in range(1, mat.size()):
+def calculate_QR(mat):
+	q_list = []
+	R = Matrix(mat.size())
+
+	for i in range(mat.size()):
 		vector = Vector(mat.get_col(i))
 
 		aux_vec = Vector([0] * mat.size())
 		for j in range(i):
-			aux_vec += q_list[j] * vector.dot_product(q_list[j])
+			prod = vector.dot_product(q_list[j])
+			R.set(j,i, prod)
+			aux_vec += q_list[j] * prod
 
 		e = vector - aux_vec
+		R.set(i,i,e.get_norm())
 		q_list.append(e.normalize())
 
-	return Matrix.from_col_lists([x.get_values() for x in q_list])
+	return Matrix.from_col_lists([x.get_values() for x in q_list]), R
 
 def get_egien_man(mat, row, col):
 	a = mat.get(row-1, col-1)
