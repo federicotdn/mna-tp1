@@ -27,7 +27,7 @@
 \begin{abstract}
 
 \centering
-Generación y cálculo de autovalores en forma analítica y númerica, utilizando el método QR, de la matriz correspondiente a la discretización del Jacobiano del modelo Brusselator.
+Generación y cálculo de autovalores en forma analítica y numérica, utilizando el método QR, de la matriz correspondiente a la discretización del Jacobiano del modelo Brusselator.
 
 \end{abstract}
 
@@ -57,7 +57,7 @@ donde
 $$x = x(t,z)$$
 $$y = y(t,z)$$
 con las condiciones iniciales $x(0,z) = x_0(z), y(0,z) = y_0(z)$ y las condiciones de borde de Dirichlet $x(t,0) = x(t,1) = x^*, y(t,0) = y(t,1) = y^*$ donde $0 \leq z \leq 1$ es el espacio de coordenadas a lo largo del tubo y $t$, el tiempo.
-En el modelo llamdo Brusselator se consideran:
+En el modelo llamado Brusselator se consideran:
 $$f(x,y) = \alpha - (\beta + 1)x + x^2y,\:g(x,y) = \beta x - x^2y$$
 Este sistema admite las soluciones estacionarias triviales $x^* = \alpha,\: y^*=\frac{\beta}{\alpha}$
 
@@ -74,13 +74,15 @@ El artículo se divide en dos secciones principales: metodología y resultados y
 
 Para la realización del trabajo práctico se utilizó el idioma de programación Python 3.4.  Con el fin de tener un mejor control sobre los cálculos realizados, se decidió crear una clase nueva para modelar matrices matemáticas.  Esta clase permite realizar operaciones comunes entre matrices (multiplicación, suma, resta, etc.), y también armar matrices comúnmente usadas (identidad, tridiagonal, etc.).
 
-La implementación de la clase mencionada esta separada en varios archivos.  En el archivo matrix.py se encuentra la clase \textbf{Matrix}, que modela a una matriz matematica cuadrada de tamaño $N\times N$. Esta clase incluye los métodos que describen cómo realizar operaciones entre matrices, por ejemplo, el método \emph{\_\_mul\_\_(self, other)} realiza los cálculos necesarios para multiplicar dos matrices. La clase también posee constructores que permiten crear matrices predefinidas como la identidad o la matriz nula.
+La implementación de la clase mencionada esta separada en varios archivos.  En el archivo \emph{matrix.py} se encuentra la clase \textbf{Matrix}, que modela a una matriz matemática cuadrada de tamaño $N\times N$. Esta clase incluye los métodos que describen cómo realizar operaciones entre matrices, por ejemplo, el método \emph{\_\_mul\_\_(self, other)} realiza los cálculos necesarios para multiplicar dos matrices. La clase también posee constructores que permiten crear matrices predefinidas como la identidad o la matriz nula.
 
 Aunque la clase \textbf{Matrix} modela el comportamiento de una matriz, los valores numéricos de la matriz no se encuentran directamente almacenados allí.  En cambio, cada instancia de la clase \textbf{Matrix} posee una variable de tipo \textbf{MatrixStorage}, en donde se almacenan todos los valores.  \textbf{MatrixStorage} es una interfaz que se encuentra en el archivo \emph{matrix\_storage.py}, que describe los métodos que deberían tener clases que deseen servir como sistema de almacenamiento de los valores de la matriz.  Uno de los métodos descritos es, por ejemplo, \emph{get(i, j)}, que debe devolver el valor almacenado en la fila i, columna j.
 
 En el trabajo práctico se experimento con dos implementaciones distintas de \textbf{MatrixStorage}.  La primera en ser creada fue \textbf{ListMatrixStorage}, en el archivo \emph{list\_matrix\_storage.py}.  Ésta clase implementa el almacenamiento de los valores como una lista de listas de valores, donde cada lista interna representa las filas de la matriz.  La segunda implementación creada fue \textbf{HashMatrixStorage}, que utiliza un la clase diccionario de Python para almacenar valores.  En éste caso, para acceder o establecer un valor de la matriz en la posición (i, j), se calcula primero el hash de la dupla que representa la posición, y a partir del valor resultante se accede al valor en el diccionario.  La ventaja de éste método es que no es necesario almacenar ceros, ya que cuando se intenta acceder a un valor (i, j) que no fue establecido en el diccionario, se devuelve automáticamente el valor 0.  El método no es perfecto ya que siempre existe la probabilidad de que ocurran colisiones: el hash de dos duplas de posiciones resultan en valores que llevan a la misma posición del diccionario.
 
-Para crear un nuevo sistema de almacenamiento hay que implementar la clase \textbf{MatrixStorage}, e incluir la clase en \emph{matrix.py}.  Por defecto, las matrices se construyen utilizando \textbf{ListMatrixStorage}, lo cual se puede cambiar reemplazando la clase utilizada en el constructor default \emph{\_\_init\_\_(self)} de \textbf{Matrix}.
+La tercera implementación de \textbf{MatrixStorage} fue \textbf{YaleMatrixStorage}.    Ésta implementación sigue el modelo Yale de almacenamiento de matrices ralas \cite{yale}.  La ventaja del método Yale es que no almacena valores nulos (0), y no sufre el problema de \textbf{HashMatrixStorage}, ya que cada elemento se guarda en una posición específica y no existe la probabilidad de colisiones, que disminuyen la velocidad del acceso de los datos.
+
+Para crear un nuevo sistema de almacenamiento hay que implementar la interfaz \textbf{MatrixStorage}, e incluir la clase en \emph{matrix.py}.  Por defecto, las matrices se construyen utilizando \textbf{ListMatrixStorage}, lo cual se puede cambiar reemplazando la clase utilizada en el constructor default \emph{\_\_init\_\_(self)} de \textbf{Matrix}.
 
 \subsection{Discretización de la matriz}
 Para construir la matriz A en Python, primero se construyó cada sub-matriz.  Las matrices T e I fueron generadas con los constructores \emph{toeplitz\_tridiagonal} e \emph{identity}, respectivamente.  Una vez construidas las cuatro sub-matrices, se armó la matriz A utilizando el constructor \emph{from\_mat\_lists}.  
@@ -92,11 +94,11 @@ Para resolver este problema se utilizó el método QR y Gram-Schmidt.
 Sea $A \: \epsilon \: \mathbb{R}^{m \times n}$. Luego existen dos matrices: $Q\: \epsilon \: \mathbb{R}^{m \times }$ ortogonal y $R \: \epsilon \: \mathbb{R}^{m \times n}$ triangular superior tal que $A=Q \times R$. En el modelo de Brusselator, $A \: \epsilon \: \mathbb{R}^{n \times n}$ por lo tanto $Q \: \epsilon \: \mathbb{R}^{n \times n}$. 
 
 \subsubsection{Gram-Schmidt}
-El método de ortognalización de Gram-Schmidt es el siguiente:
+El método de ortogonalización de Gram-Schmidt es el siguiente:
 \begin{enumerate}
   \item $$q_0 = \frac{\vec{v_1}}{\lVert \vec{v_1}\rVert_2}$$
   \item para cada $i \geq 2$ 
-  $$\vec{e_i}=\vec{v_i}-\sum_{j=1}^{i-1} < \vec{v_i},\vec{q_j}> \times \vec{q_j}$$ 
+  $$\vec{e_i}=\vec{v_i}-\sum_{j=1}^{i-1} < \vec{v_i},\vec{q_j}> \times\ \vec{q_j}$$ 
   $$\vec{q_i} = \frac{\vec{e_i}}{\lVert \vec{e_i} \rVert}$$
   $Q$ se compone por los distintos $\vec{q_i}$ como columnas. Es decir,
   $$Q=
@@ -143,7 +145,7 @@ x_{0,0} & x_{0,1} & \ldots & \ldots & x_{0,n-1} \\
 
 \end{pmatrix}
 $$
-el algoritmo comienza por $x_{n-1,n-1}$. Por lo explicado anteriormente, se busca $x_{n-1,n-2} = 0$ o $x_{n-2,n-3} =0$. Si $x_{n-1,n-2} =0$, significa que $x_{n-1,n-1}$ es un autovalor real ya que esto implica que $x_{n-2,n-2}$ convergió y, como converge "de abajo hacia arriba", $x_{n-1,n-1}$ también convergió. Por lo tanto,e se agrega $x_{n-1,n-1}$ a la lista de autovalores obtenidos y se elimina la fila y columna a la que pertenece, ya que ya se obutvo el autovalor. Si $x_{n-2,n-3} =0$, se trata de auto valores complejos, por lo que se forma la siguiente matriz:
+el algoritmo comienza por $x_{n-1,n-1}$. Por lo explicado anteriormente, se busca $x_{n-1,n-2} = 0$ o $x_{n-2,n-3} =0$. Si $x_{n-1,n-2} =0$, significa que $x_{n-1,n-1}$ es un autovalor real ya que esto implica que $x_{n-2,n-2}$ convergió y, como converge "de abajo hacia arriba", $x_{n-1,n-1}$ también convergió. Por lo tanto,e se agrega $x_{n-1,n-1}$ a la lista de autovalores obtenidos y se elimina la fila y columna a la que pertenece, ya que ya se obtuvo el autovalor. Si $x_{n-2,n-3} =0$, se trata de auto valores complejos, por lo que se forma la siguiente matriz:
 $$
 \begin{pmatrix}
 x_{n-2,n-2} & x_{n-2, n-1} \\
@@ -162,10 +164,10 @@ siendo $tol$ un valor de tolerancia arbitrario. En este caso se eligió, $tol = 
 
 En una primera iteración del trabajo se había establecido como condición de corte $|\lambda_1^{k+1} - \lambda_1^{k}| < \epsilon$. Esto no funcionó ya que la convergencia de un autovalor en el método QR está determinada por el elemento que se encuentra debajo. Por lo tanto se utilizó \eqref{eq:cond}.
 
-Para obtener los autovalores hay que llamar a la fucnión \emph{calculate\_eigenvalues\_A(m, L, delta1, delta2, alpha, beta)}. Dicha función calcula la matriz A de acuerdo a los valores recibidos. La función itera hasta que todos los autovalores hayan sido encontrados.
+Para obtener los autovalores hay que llamar a la función \emph{calculate\_eigenvalues\_A(m, L, delta1, delta2, alpha, beta)}. Dicha función calcula la matriz A de acuerdo a los valores recibidos. La función itera hasta que todos los autovalores hayan sido encontrados.
 
-\subsection{Cálculo ánalitico de los autovalores}
-Para obtener los autovalores de la matriz A analíticamente, se utilizó el mismo algoritmo que fue utilizado en el documento \emph{collection.ps} especificado por la cátedra.  Para calcular las raíces del polinomio formado, se utilizó el método roots de la librería NumPy.
+\subsection{Cálculo analítico de los autovalores}
+Para obtener los autovalores de la matriz A analíticamente, se utilizó el mismo algoritmo que fue utilizado en el documento \emph{collection.ps} especificado por la cátedra.  Para calcular las raíces del polinomio formado, se utilizó el método \emph{roots} de la librería NumPy.
 
 \section{Resultados y conclusiones}
 En todos los casos se utilizaron $L=0,51302$, $delta1=0,008$, $delta2=0,004$, $alpha=2$ y $beta=5,45$
@@ -198,7 +200,7 @@ En todos los casos se utilizaron $L=0,51302$, $delta1=0,008$, $delta2=0,004$, $a
 \end{table}
 Como se puede observar en la tabla para matrices  $100 \times 100$ y para matrices más chicas  tardó un tiempo razonable, pero para matrices $140 \times 140$ tardó más de 15 minutos. Por lo tanto se recomienda como tamaño máximo de matriz utilizar 140 x 140. También se puede observar que el método no es eficiente ya que tarda mucho.
 
-Las matrices con las que opera el programa son ralas. Como se mencionó anteriormente se realizó una implementación de esta matrices llamada \textbf{HashMatrixStorage} que utiliza un diccionario para guardar los elementos. Esto permite ahorrar memoria y procesar menos datos, pero como se puede observar en la tabla 1, en la práctica probó ser más lento. Tardando hasta casi tres veces más que utilizando la implementación con listas. Tambien se realizó una implementacion llamada \textbf{YaleMatrixStorage} la cúal también ahorraba espacio y también probo ser más lenta. Además, se intentó realizar una variacíon a la multiplicación llamada \emph{multiply\_quick\_values}. Esta, en lugar de multiplicar las filas y columnas completas, se obtenían las filas y columnas solo con los elementos que fueran distintos de 0. De esta manera, se evita iterar sobre una gran cantidad de números, "salteando" los 0. Está implementación también resulto ser más lenta.
+Las matrices con las que opera el programa son ralas. Como se mencionó anteriormente se realizó una implementación de esta matrices llamada \textbf{HashMatrixStorage} que utiliza un diccionario para guardar los elementos. Esto permite ahorrar memoria y procesar menos datos, pero como se puede observar en la tabla 1, en la práctica probó ser más lento. Tardando hasta casi tres veces más que utilizando la implementación con listas. También se realizó una implementacion llamada \textbf{YaleMatrixStorage} la cual también ahorraba espacio y también probo ser más lenta. Además, se intentó realizar una variación a la multiplicación llamada \emph{multiply\_quick\_values}. Esta, en lugar de multiplicar las filas y columnas completas, se obtenían las filas y columnas solo con los elementos que fueran distintos de 0. De esta manera, se evita iterar sobre una gran cantidad de números, "salteando" los 0. Está implementación también resulto ser más lenta.
 
 El orden de complejidad del algoritmo en cada iteración es $O(n^3)$. Sabemos de la existencia de otros algoritmos que operan mejor, pero no pudimos realizar una implementación que funcionara correctamente. Por ejemplo utilizando Hessenberg se podría reducir la complejidad de cada iteración a $O(n)$. 
 
@@ -226,10 +228,10 @@ En una primera iteración del trabajo, en lugar de utilizar $T_{k+1}=R_k \times 
   $20$ & $40 \times 40$  & $18,79$ & $R_k \times Q_k$\\
   \hline
 \end{tabular}
-\caption{\emph{Tiempo de cálculo de autovalores utilizando distintas formas de calcuar $T_{k+1}$.}}
+\caption{\emph{Tiempo de cálculo de autovalores utilizando distintas formas de calcular $T_{k+1}$.}}
 \end{table}
 
-\subsection{Comparación de resultados númericos y análiticos}
+\subsection{Comparación de resultados numéricos y analíticos}
 \begin{table}[H]\centering
 \begin{tabular}{|c|c|c|c|}
   \hline
@@ -252,9 +254,9 @@ En una primera iteración del trabajo, en lugar de utilizar $T_{k+1}=R_k \times 
   $20$ & $40 \times 40$  & $0,0021$ & Analítico\\
   \hline
 \end{tabular}
-\caption{\emph{Tiempo de cálculo de autovalores utilizando cálculos analíticos y númericos}}
+\caption{\emph{Tiempo de cálculo de autovalores utilizando cálculos analíticos y numéricos}}
 \end{table}
-Como se puede observar en la Tabla 3, la diferencia de tiempo entre el cálculo análitico y el númerico es importante. Siendo el cálculo númerico varias veces más rapido. Para $m=5$, los autovalores son exactamente iguales, pero para $m=20$, por ejemplo, difieren. La siguiente tabla compara unos pocos autovalores para $m=20$.
+Como se puede observar en la Tabla 3, la diferencia de tiempo entre el cálculo analítico y el numérico es importante. Siendo el cálculo numérico varias veces más rápido. Para $m=5$, los autovalores son exactamente iguales, pero para $m=20$, por ejemplo, difieren. La siguiente tabla compara unos pocos autovalores para $m=20$.
 
 \begin{table}[H]\centering
 \begin{tabular}{|c|c|}
@@ -272,7 +274,7 @@ Como se puede observar en la Tabla 3, la diferencia de tiempo entre el cálculo 
   $47.5814180808$ & $-47.5814180808$\\
   \hline
 \end{tabular}
-\caption{\emph{Algunos autovalores para $m=5$ utilizando cálculo númerico y analítico}}
+\caption{\emph{Algunos autovalores para $m=5$ utilizando cálculo numérico y analítico}}
 \end{table}
 Conviene utilizar el cálculo analítico ya que es significativamente más rápido.
 
@@ -287,6 +289,12 @@ Conviene utilizar el cálculo analítico ya que es significativamente más rápi
 \bibitem{people}
 \url{http://people.inf.ethz.ch/arbenz/ewp/Lnotes/chapter3.pdf}
 (Septiembre/Octubre 2014)
+
+\bibitem{yale}
+Yale Matrix Storage
+\url{http://en.wikipedia.org/wiki/Sparse_matrix#Yale}
+(Septiembre/Octubre 2014)
+
 \end{thebibliography}
 
 \end{document}
